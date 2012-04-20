@@ -4,7 +4,7 @@
   <title><![CDATA[Jedisto's Blog]]></title>
   <link href="http://danielking.github.com/atom.xml" rel="self"/>
   <link href="http://danielking.github.com/"/>
-  <updated>2012-04-20T22:34:38+08:00</updated>
+  <updated>2012-04-20T22:38:03+08:00</updated>
   <id>http://danielking.github.com/</id>
   <author>
     <name><![CDATA[Jedisto]]></name>
@@ -12,5 +12,14 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[开篇]]></title>
+    <link href="http://danielking.github.com/blog/2012/04/20/kai-pian/"/>
+    <updated>2012-04-20T22:36:00+08:00</updated>
+    <id>http://danielking.github.com/blog/2012/04/20/kai-pian</id>
+    <content type="html"><![CDATA[<p>试试，这个还挺有意思！</p>
+]]></content>
+  </entry>
   
 </feed>
