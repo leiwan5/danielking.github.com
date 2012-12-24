@@ -1,0 +1,3 @@
+[submodule "angular-table"]
+	path = angular-table
+	url = git@github.com:danielking/angular-table.git
