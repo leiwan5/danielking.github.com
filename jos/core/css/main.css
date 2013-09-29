@@ -1,0 +1,21 @@
+.navbar {
+  min-width: 800px;
+}
+.navbar .open a.navbar-brand {
+  background: #eee !important;
+  color: #444444;
+}
+.dropdown-menu {
+  box-shadow: none;
+  border-radius: 0;
+}
+#apps {
+  position: absolute;
+  top: 51px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#apps > .app {
+  padding: 8px;
+}
