@@ -15,6 +15,36 @@
     return angular.bootstrap(document, ['core']);
   });
 
+  angular.module('core').directive('coreApp', [
+    'common.message', '$http', function(message, $http) {
+      return {
+        link: function(scope, element, attrs) {
+          return scope.$watch('app.actived', function(cur, prev) {
+            if (cur && !prev) {
+              message.publish('app', {
+                app_name: scope.app.name,
+                event: 'actived'
+              });
+            }
+            if (cur && !scope.app.loaded) {
+              return $http.get("" + scope.app.name + "/index.html").success(function(data) {
+                var appBox;
+                appBox = $('<div/>').appendTo(element);
+                appBox.html(data);
+                angular.bootstrap(appBox, [scope.app.name]);
+                scope.app.loaded = true;
+                return message.publish('app', {
+                  app_name: scope.app.name,
+                  event: 'loaded'
+                });
+              }).error(function() {});
+            }
+          });
+        }
+      };
+    }
+  ]);
+
   angular.module('core').directive('coreNavbar', [
     '$templateCache', function($templateCache) {
       return {
@@ -31,7 +61,13 @@
       loadJs = function(js) {
         return eval(js);
       };
-      loadCss = function(css) {};
+      loadCss = function(css) {
+        var node;
+        console.log(css);
+        node = document.createElement('style');
+        node.innerHTML = css;
+        return document.head.appendChild(node);
+      };
       $(document).on('app_reg', function(evt, app) {
         $rootScope.$$apps = $rootScope.$$apps || [];
         return $rootScope.$$apps.push(app);
@@ -70,76 +106,29 @@
           });
         },
         active: function(app) {
-          var appViewport, _app, _i, _len, _ref, _results;
-          appViewport = $("#" + app.name);
-          if (appViewport.length === 0) {
-            return $http.get("" + app.name + "/index.html").success(function(data) {
-              var _app, _i, _len, _ref, _results;
-              $('#apps > .app').hide();
-              appViewport = $('<div/>');
-              appViewport.attr({
-                id: app.name
-              }).addClass('app').append(data).appendTo($('#apps'));
-              angular.bootstrap(appViewport, [app.name]);
-              app.loaded = true;
-              _ref = $rootScope.$$apps;
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                _app = _ref[_i];
-                _results.push(_app.actived = _app === app);
-              }
-              return _results;
-            }).error(function() {});
-          } else if (appViewport.length === 1) {
-            $('#apps > .app').hide();
-            appViewport.show();
-            _ref = $rootScope.$$apps;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              _app = _ref[_i];
-              _results.push(_app.actived = _app === app);
-            }
-            return _results;
+          var _app, _i, _len, _ref, _results;
+          _ref = $rootScope.$$apps;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            _app = _ref[_i];
+            _results.push(_app.actived = _app === app);
           }
+          return _results;
         }
       };
     }
   ]);
 
   angular.module('common').service('common.message', [
-    '$rootScope', '$rootElement', function($rootScope, $rootElement) {
-      if ($rootElement[0] === document) {
-        $(document).data('channels', {});
-        $(document).on('msg', function(evt, data) {
-          var channels, scope, _i, _len, _ref, _results;
-          channels = $(document).data('channels');
-          if (channels[data.channel]) {
-            _ref = channels[data.channel];
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              scope = _ref[_i];
-              _results.push(scope.$broadcast('msg', {
-                from: evt.target.id,
-                channel: data.channel,
-                message: data.message
-              }));
-            }
-            return _results;
-          }
-        });
-      }
+    '$rootScope', function($rootScope) {
       return {
-        publish: function(channel, message) {
-          return $rootElement.trigger('msg', {
-            channel: channel,
-            message: message
-          });
+        publish: function(message, data) {
+          return PubSub.publish(message, data);
         },
-        subscribe: function(channel) {
-          var channels;
-          channels = $(document).data('channels');
-          channels[channel] = channels[channel] || [];
-          return channels[channel].push($rootScope);
+        subscribe: function(message) {
+          return PubSub.subscribe(message, function(message, data) {
+            return $rootScope.$emit('message', message, data);
+          });
         }
       };
     }

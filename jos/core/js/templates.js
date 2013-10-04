@@ -70,12 +70,6 @@ angular.module('core').run(['$templateCache', function($templateCache) {
     "\n" +
     "  </ul>\r" +
     "\n" +
-    "\r" +
-    "\n" +
-    "\r" +
-    "\n" +
-    "\r" +
-    "\n" +
     "</nav>"
   );
 

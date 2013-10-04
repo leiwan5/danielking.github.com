@@ -18,7 +18,14 @@
   angular.module(APP_NAME).controller('AppController', [
     '$scope', 'common.message', function($scope, message) {
       $scope.app_name = APP_NAME;
-      return message.publish('app', 'hello');
+      message.subscribe('app');
+      $rootScope.$on('message', function(evt, message, data) {
+        return console.log(data);
+      });
+      return message.publish('app:started', {
+        app_name: APP_NAME,
+        event: 'started'
+      });
     }
   ]);
 

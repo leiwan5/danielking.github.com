@@ -11,6 +11,21 @@ angular.module('core').run ['apps', '$rootScope', 'common.message', (apps, $root
 $ ->
   angular.bootstrap document, ['core']
 
+angular.module('core').directive 'coreApp', ['common.message', '$http', (message, $http) ->
+  link: (scope, element, attrs) ->
+    scope.$watch 'app.actived', (cur, prev) ->
+      if cur and !prev
+        message.publish 'app', app_name: scope.app.name, event: 'actived'
+      if cur and !scope.app.loaded
+        $http.get("#{scope.app.name}/index.html").success((data) ->
+            appBox = $('<div/>').appendTo element
+            appBox.html data
+            angular.bootstrap appBox, [scope.app.name]
+            scope.app.loaded = true
+            message.publish 'app', app_name: scope.app.name, event: 'loaded'
+          ).error(-> )
+]
+
 angular.module('core').directive 'coreNavbar', ['$templateCache' , ($templateCache) ->
 	template: $templateCache.get('navbar.html')
 	replace: true
@@ -23,7 +38,10 @@ angular.module('core').service 'apps', ['$http', '$rootScope', ($http, $rootScop
     eval js
 
   loadCss = (css) ->
-    # console.log css
+    console.log css
+    node = document.createElement 'style'
+    node.innerHTML = css
+    document.head.appendChild node
 
   $(document).on 'app_reg', (evt, app) ->
     $rootScope.$$apps = $rootScope.$$apps or []
@@ -59,44 +77,17 @@ angular.module('core').service 'apps', ['$http', '$rootScope', ($http, $rootScop
           $rootScope.$broadcast 'app_loaded_all'
 
   active: (app) ->
-    appViewport = $("##{app.name}")
-    if appViewport.length == 0
-      $http.get("#{app.name}/index.html").success((data) ->
-          $('#apps > .app').hide()
-          appViewport = $('<div/>')
-          appViewport.attr(id: app.name).addClass('app').append(data).appendTo $('#apps')
-          angular.bootstrap appViewport, [app.name]
-          app.loaded = true
-          for _app in $rootScope.$$apps
-            _app.actived = _app == app
-        ).error(-> )
-
-    else if appViewport.length == 1
-      $('#apps > .app').hide()
-      appViewport.show()
-      for _app in $rootScope.$$apps
-        _app.actived = _app == app
+    for _app in $rootScope.$$apps
+      _app.actived = _app == app
 ]
 
-angular.module('common').service 'common.message', ['$rootScope', '$rootElement', ($rootScope, $rootElement) ->
-  if $rootElement[0] == document
-    $(document).data 'channels', {}
-    $(document).on 'msg', (evt, data) ->
-      channels = $(document).data 'channels'
-      if channels[data.channel]
-        for scope in  channels[data.channel]
-          scope.$broadcast 'msg',
-            from: evt.target.id
-            channel: data.channel
-            message: data.message
+angular.module('common').service 'common.message', ['$rootScope', ($rootScope) ->
+  publish: (message, data) ->
+    PubSub.publish message, data
 
-  publish: (channel, message) ->
-    $rootElement.trigger 'msg', channel: channel, message: message
-
-  subscribe: (channel) ->
-    channels = $(document).data 'channels'
-    channels[channel] = channels[channel] || []
-    channels[channel].push $rootScope
+  subscribe: (message) ->
+    PubSub.subscribe message, (message, data) ->
+      $rootScope.$emit 'message', message, data
 ]
 
 

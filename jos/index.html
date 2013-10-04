@@ -9,11 +9,14 @@
         <script src="core/js/lib/angular.min.js"></script>
         <script src="core/js/lib/bootstrap.js"></script>
         <script src="core/js/lib/async.js"></script>
+        <script src="core/js/lib/pubsub.js"></script>
         <script src="core/js/main.js"></script>
         <script src="core/js/templates.js"></script>
     </head>
     <body id="core" ng-controller="CoreController" ng-show="show">
       <div core-navbar></div>
-      <div id="apps"></div>
+      <div id="apps">
+        <div core-app ng-repeat="app in $$apps" ng-show="app.actived" ng-class="app.name"></div>
+      </div>
     </body>
 </html>
