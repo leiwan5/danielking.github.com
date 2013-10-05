@@ -8,8 +8,14 @@ angular.module('core').run ['apps', '$rootScope', 'common.message', (apps, $root
   message.subscribe 'app'
 ]
 
+window.initUi = (el) ->
+  el = $(el)
+  el.find('.ui.dropdown').dropdown
+    debug: false
+
 $ ->
   angular.bootstrap document, ['core']
+  initUi document
 
 angular.module('core').directive 'coreApp', ['common.message', '$http', (message, $http) ->
   link: (scope, element, attrs) ->
@@ -23,6 +29,8 @@ angular.module('core').directive 'coreApp', ['common.message', '$http', (message
             angular.bootstrap appBox, [scope.app.name]
             scope.app.loaded = true
             message.publish 'app', app_name: scope.app.name, event: 'loaded'
+            element.addClass 'app'
+            initUi element
           ).error(-> )
 ]
 

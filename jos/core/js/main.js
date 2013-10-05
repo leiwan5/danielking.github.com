@@ -11,8 +11,16 @@
     }
   ]);
 
+  window.initUi = function(el) {
+    el = $(el);
+    return el.find('.ui.dropdown').dropdown({
+      debug: false
+    });
+  };
+
   $(function() {
-    return angular.bootstrap(document, ['core']);
+    angular.bootstrap(document, ['core']);
+    return initUi(document);
   });
 
   angular.module('core').directive('coreApp', [
@@ -33,10 +41,12 @@
                 appBox.html(data);
                 angular.bootstrap(appBox, [scope.app.name]);
                 scope.app.loaded = true;
-                return message.publish('app', {
+                message.publish('app', {
                   app_name: scope.app.name,
                   event: 'loaded'
                 });
+                element.addClass('app');
+                return initUi(element);
               }).error(function() {});
             }
           });
