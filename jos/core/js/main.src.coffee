@@ -46,7 +46,6 @@ angular.module('core').service 'apps', ['$http', '$rootScope', ($http, $rootScop
     eval js
 
   loadCss = (css) ->
-    console.log css
     node = document.createElement 'style'
     node.innerHTML = css
     document.head.appendChild node
@@ -89,6 +88,17 @@ angular.module('core').service 'apps', ['$http', '$rootScope', ($http, $rootScop
       _app.actived = _app == app
 ]
 
+angular.module('common').service 'common.github', ['$rootScope', ($rootScope) ->
+  # github = new Github username: '', password: ''
+  # user = github.getUser()
+  # console.log user
+  # user.gists (err, gists) ->
+  #   console.log gists
+
+  auth: ->
+]
+
+
 angular.module('common').service 'common.message', ['$rootScope', ($rootScope) ->
   publish: (message, data) ->
     PubSub.publish message, data
@@ -99,14 +109,26 @@ angular.module('common').service 'common.message', ['$rootScope', ($rootScope) -
 ]
 
 
-angular.module('core').controller 'CoreController', ['$scope', '$rootElement', 'apps', 'common.message', ($scope, $rootElement, apps, message) ->
+angular.module('core').controller 'CoreController', ['$scope', '$rootElement', 'apps', 'common.message', 'common.github', ($scope, $rootElement, apps, message, github) ->
   $rootElement.attr 'id', 'core'
+  $scope.desktopActive = true
+
   $scope.$on 'app_loaded_all', ->
     $scope.show = true
     $scope.$digest()
   $scope.activeApp = (app) ->
+    $scope.desktopActive = false
     apps.active app
 
+  $scope.toggleDesktop = ->
+    $scope.desktopActive = !$scope.desktopActive
+
   $scope.$on 'msg', (evt, data) ->
-    console.log evt, data
+    # console.log evt, data
+
+
+]
+
+angular.module('core').controller 'DesktopController', ['$scope', ($scope) ->
+
 ]

@@ -1,9 +1,9 @@
 (function() {
   var APP_NAME, APP_TITLE;
 
-  APP_NAME = 'com_jedisto_jedios_clock';
+  APP_NAME = 'com_jedisto_jedios_bookmarks';
 
-  APP_TITLE = 'Clock';
+  APP_TITLE = 'Bookmarks';
 
   angular.module(APP_NAME, ['common']);
 

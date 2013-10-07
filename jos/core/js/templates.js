@@ -6,7 +6,7 @@ angular.module('core').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('navbar.html',
-    "<div class=\"ui menu inverted fixed\"><div class=\"item ui dropdown\"><div class=\"text\"><strong><i class=\"icon laptop\"></i>jOS</strong></div><div class=\"menu\"><div class=\"item\"><i class=\"icon settings small\"></i>Settings</div><div class=\"item\"><i class=\"icon sign in small\"></i>Login</div></div></div><a ng-repeat=\"app in $$apps\" ng-class=\"{active: app.actived}\" ng-click=\"activeApp(app)\" class=\"item\"><i class=\"icon angle right\"></i>{{app.title}}</a><div class=\"item ui right dropdown top pointing\"><div class=\"text\"><i class=\"icon ellipsis horizontal\"></i></div><div class=\"menu\"><div class=\"item\"><i class=\"icon settings small\"></i>Settings</div><div class=\"item\"><i class=\"icon sign in small\"></i>Login</div></div></div></div>"
+    "<div class=\"ui small menu fixed\"><div class=\"item\"><i class=\"icon laptop\"></i><strong>jOS</strong></div><a ng-click=\"toggleDesktop()\" ng-class=\"{active: desktopActive}\" class=\"item\"><i class=\"icon home small\"></i>Home</a><a ng-repeat=\"app in $$apps | filter: {loaded: true}\" ng-class=\"{active: (app.actived &amp;&amp; !desktopActive)}\" ng-click=\"activeApp(app)\" class=\"item\"><i class=\"icon angle right\"></i>{{app.title}}</a><a ng-click=\"openSettingsDialog()\" class=\"item right\"><i class=\"icon settings small\"></i>Settings</a><a ng-click=\"openSignInDialog()\" class=\"item right\"><i class=\"icon sign in small\"></i>Sign in</a></div>"
   );
 
 }]);

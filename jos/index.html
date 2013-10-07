@@ -4,18 +4,31 @@
         <title>jOS</title>
         <link rel="stylesheet" type="text/css" href="core/css/semantic.css">
         <link rel="stylesheet" type="text/css" href="core/css/main.css">
+        <script src="core/js/lib/base64.js"></script>
+        <script src="core/js/lib/underscore-min.js"></script>
         <script src="core/js/lib/jquery-1.9.1.js"></script>
         <script src="core/js/lib/angular.min.js"></script>
         <script src="core/js/lib/semantic.min.js"></script>
         <script src="core/js/lib/async.js"></script>
         <script src="core/js/lib/pubsub.js"></script>
+        <script src="core/js/lib/github.js"></script>
         <script src="core/js/main.js"></script>
         <script src="core/js/templates.js"></script>
     </head>
     <body id="core" ng-controller="CoreController" ng-show="show">
       <div core-navbar></div>
       <div id="apps">
-        <div core-app ng-repeat="app in $$apps" ng-show="app.actived" ng-class="app.name"></div>
+        <div core-app ng-repeat="app in $$apps" ng-show="app.actived && !desktopActive" ng-class="app.name"></div>
+      </div>
+      <div id="desktop" ng-controller="DesktopController" ng-show="desktopActive">
+        <div class="ui segment app" ng-repeat="app in $$apps" ng-click="activeApp(app)">
+          <div class="ui top left attached label" ng-class="{black: !app.loaded, teal: app.loaded}">
+            {{app.title}}
+          </div>
+          <p>
+            description of this app.
+          </p>
+        </div>
       </div>
     </body>
 </html>

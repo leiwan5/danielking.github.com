@@ -73,7 +73,6 @@
       };
       loadCss = function(css) {
         var node;
-        console.log(css);
         node = document.createElement('style');
         node.innerHTML = css;
         return document.head.appendChild(node);
@@ -129,6 +128,14 @@
     }
   ]);
 
+  angular.module('common').service('common.github', [
+    '$rootScope', function($rootScope) {
+      return {
+        auth: function() {}
+      };
+    }
+  ]);
+
   angular.module('common').service('common.message', [
     '$rootScope', function($rootScope) {
       return {
@@ -145,20 +152,25 @@
   ]);
 
   angular.module('core').controller('CoreController', [
-    '$scope', '$rootElement', 'apps', 'common.message', function($scope, $rootElement, apps, message) {
+    '$scope', '$rootElement', 'apps', 'common.message', 'common.github', function($scope, $rootElement, apps, message, github) {
       $rootElement.attr('id', 'core');
+      $scope.desktopActive = true;
       $scope.$on('app_loaded_all', function() {
         $scope.show = true;
         return $scope.$digest();
       });
       $scope.activeApp = function(app) {
+        $scope.desktopActive = false;
         return apps.active(app);
       };
-      return $scope.$on('msg', function(evt, data) {
-        return console.log(evt, data);
-      });
+      $scope.toggleDesktop = function() {
+        return $scope.desktopActive = !$scope.desktopActive;
+      };
+      return $scope.$on('msg', function(evt, data) {});
     }
   ]);
+
+  angular.module('core').controller('DesktopController', ['$scope', function($scope) {}]);
 
 }).call(this);
 
